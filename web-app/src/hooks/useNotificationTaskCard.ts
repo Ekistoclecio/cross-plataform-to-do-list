@@ -4,7 +4,7 @@ import getTaskById from "@/utils/getTaskById";
 import { useDisclosure } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function useNotificationTaskCard(taskId: string) {
   const {
@@ -13,9 +13,15 @@ export default function useNotificationTaskCard(taskId: string) {
     onClose: onCloseEditModalByNotification,
   } = useDisclosure();
   const { data: session } = useSession();
-  const { tasksArray, updateTasks } = useTasksContext();
-  const [task, setTask] = useState(getTaskById(tasksArray, taskId));
+  const { activeTasksArray, updateTasks } = useTasksContext();
+  const [task, setTask] = useState(getTaskById(activeTasksArray, taskId));
   const router = useRouter();
+
+  useEffect(() => {
+    if (activeTasksArray) {
+      setTask(getTaskById(activeTasksArray, taskId));
+    }
+  }, [activeTasksArray]);
 
   async function handleClickTaskCard() {
     if (session?.user.token) {

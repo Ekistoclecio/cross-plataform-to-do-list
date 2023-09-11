@@ -11,14 +11,15 @@ export default function useTasksPage() {
     onClose: createTaskModalonClose,
   } = useDisclosure();
   const { data: session } = useSession();
-  const { updateTasks, tasksArray, setTasksArray } = useTasksContext();
+  const { updateTasks, activeTasksArray, setActiveTasksArray } =
+    useTasksContext();
   const router = useRouter();
 
   async function handleOnDragEnd(result: any) {
     console.log(result);
     if (result.destination) {
-      setTasksArray(
-        tasksArray.map((task) => {
+      setActiveTasksArray(
+        activeTasksArray.map((task) => {
           if (task.id == result.draggableId) {
             task.progressStatus = Number(result.destination.droppableId) as
               | 0

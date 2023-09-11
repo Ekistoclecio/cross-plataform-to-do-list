@@ -2,11 +2,11 @@ import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import { useEffect, useState } from "react";
 
 export default function useNotificationAlert() {
-  const { tasksArray } = useTasksContext();
+  const { activeTasksArray } = useTasksContext();
   const [newNotification, setNewNotification] = useState(false);
 
   useEffect(() => {
-    const notification = tasksArray.find(
+    const notification = activeTasksArray.find(
       (task) => !task.notificationVisualization && task.progressStatus != 2
     );
     if (notification != undefined) {
@@ -14,7 +14,7 @@ export default function useNotificationAlert() {
     } else {
       setNewNotification(false);
     }
-  }, [tasksArray]);
+  }, [activeTasksArray]);
 
   return { newNotification };
 }

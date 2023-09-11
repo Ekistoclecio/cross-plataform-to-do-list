@@ -1,47 +1,9 @@
 import { Box, Heading, Text } from "@gluestack-ui/themed";
 import { VictoryPie } from "victory-native";
-import { useTasksContext } from "../../providers/contexts/tasksContext";
-import { useEffect, useState } from "react";
-import { useUserContext } from "../../providers/contexts/userContext";
-
-interface PropsChartPieInterface {
-  title: string;
-  priority: boolean;
-}
+import useChartPie from "../../hooks/useChartPie";
 
 export default function ChartPie({ priority, title }: PropsChartPieInterface) {
-  const { getCurrentDate } = useUserContext();
-  const { activeTasksArray, archivedTasksArray } = useTasksContext();
-  const [dataPieGraph, setDatapieGraph] = useState([] as number[]);
-  const [allTasks, setAllTasks] = useState([] as TaskDataInterface[]);
-
-  useEffect(() => {
-    if (activeTasksArray && archivedTasksArray && priority) {
-      setAllTasks(() =>
-        [...activeTasksArray, ...archivedTasksArray].filter(
-          (task) => task.priority == true
-        )
-      );
-    } else if (activeTasksArray && archivedTasksArray) {
-      setAllTasks(() => [...activeTasksArray, ...archivedTasksArray]);
-    }
-  }, [activeTasksArray, archivedTasksArray]);
-
-  useEffect(() => {
-    if (activeTasksArray) {
-      setDatapieGraph([
-        allTasks.filter((task) => task.progressStatus === 0).length,
-        allTasks.filter((task) => task.progressStatus === 1).length,
-        allTasks.filter((task) => task.progressStatus === 2).length,
-        allTasks.filter(
-          (task) =>
-            new Date(getCurrentDate()).getTime() -
-              new Date(task.deadline).getTime() >
-              0 && task.progressStatus != 2
-        ).length,
-      ]);
-    }
-  }, [allTasks]);
+  const { dataPieGraph } = useChartPie(priority);
   return (
     <Box
       backgroundColor="#0d112a"

@@ -5,13 +5,19 @@ import getTaskById from "@/utils/getTaskById";
 import { useDisclosure, useToast } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function useTaskCard(taskId: string) {
   const { data: session } = useSession();
-  const { tasksArray, currentDate } = useTasksContext();
+  const { activeTasksArray, currentDate } = useTasksContext();
   const toast = useToast();
-  const [task, setTask] = useState(getTaskById(tasksArray, taskId));
+  const [task, setTask] = useState(getTaskById(activeTasksArray, taskId));
+
+  useEffect(() => {
+    if (activeTasksArray) {
+      setTask(getTaskById(activeTasksArray, taskId));
+    }
+  }, [activeTasksArray]);
 
   const {
     isOpen: isOpenConfirmDelete,

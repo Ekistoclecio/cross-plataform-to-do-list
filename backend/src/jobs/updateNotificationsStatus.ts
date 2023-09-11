@@ -12,28 +12,30 @@ export default async function updateNotificationStatus() {
         task.deadline,
         getCurrentDate()
       );
-      task.notificationStatus = newStatusNotification;
-      if (task.finishedDate != null) {
-        await taskRepository.update(
-          {
-            id: task.id,
-          },
-          {
-            notificationStatus: 0,
-            notificationVisualization: true,
-          }
-        );
-      } else {
-        await taskRepository.update(
-          {
-            id: task.id,
-          },
-          {
-            notificationStatus: newStatusNotification,
-            notificationVisualization:
-              newStatusNotification == 0 ? true : false,
-          }
-        );
+      if (task.notificationStatus != newStatusNotification) {
+        task.notificationStatus = newStatusNotification;
+        if (task.finishedDate != null) {
+          await taskRepository.update(
+            {
+              id: task.id,
+            },
+            {
+              notificationStatus: 0,
+              notificationVisualization: true,
+            }
+          );
+        } else {
+          await taskRepository.update(
+            {
+              id: task.id,
+            },
+            {
+              notificationStatus: newStatusNotification,
+              notificationVisualization:
+                newStatusNotification == 0 ? true : false,
+            }
+          );
+        }
       }
     });
   });

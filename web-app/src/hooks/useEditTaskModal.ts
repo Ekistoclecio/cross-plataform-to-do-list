@@ -6,7 +6,11 @@ import updateTask from "@/services/api/updateTask";
 import getTaskById from "@/utils/getTaskById";
 import { useToast } from "@chakra-ui/react";
 
-export default function useEditTaskModal(taskId: string, onClose: () => void) {
+export default function useEditTaskModal(
+  taskId: string,
+  onClose: () => void,
+  file?: boolean
+) {
   const { data: sesseion } = useSession();
   const { updateTasks } = useTasksContext();
   const [editMode, setEditMode] = useState(false);
@@ -17,8 +21,18 @@ export default function useEditTaskModal(taskId: string, onClose: () => void) {
     priority: false,
     deadline: "",
   });
-  const { tasksArray } = useTasksContext();
-  const [task, setTask] = useState(getTaskById(tasksArray, taskId));
+  const { activeTasksArray, archivedTasksArray } = useTasksContext();
+  const [task, setTask] = useState(getTaskById(activeTasksArray, taskId));
+
+  useEffect(() => {
+    if (activeTasksArray) {
+      if (file) {
+        setTask(getTaskById(archivedTasksArray, taskId));
+      } else {
+        setTask(getTaskById(activeTasksArray, taskId));
+      }
+    }
+  }, [activeTasksArray]);
 
   useEffect(() => {
     if (task != null) {
@@ -77,13 +91,15 @@ export default function useEditTaskModal(taskId: string, onClose: () => void) {
   }
 
   function closeEditModal() {
-    setEditTaskForm(() => ({
-      progressStatus: 0,
-      title: "",
-      description: "",
-      priority: false,
-      deadline: "",
-    }));
+    if (task) {
+      setEditTaskForm(() => ({
+        progressStatus: task.progressStatus,
+        title: task.title,
+        description: task.description || "",
+        priority: task.priority,
+        deadline: task.deadline,
+      }));
+    }
     setEditMode(false);
     onClose();
   }

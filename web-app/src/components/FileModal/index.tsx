@@ -1,3 +1,5 @@
+"use client";
+
 import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import {
   List,
@@ -9,9 +11,9 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import ArchiveTaskCard from "../ArchiveTaskCard";
+import FileTaskCard from "../FileTaskCard";
 
-export default function ArchiveModal({
+export default function FileModal({
   isOpen,
   onClose,
 }: PropsArchiveModalInterface) {
@@ -36,7 +38,7 @@ export default function ArchiveModal({
           <List>
             {archivedTasksArray.map((task) => (
               <ListItem key={task.id}>
-                <ArchiveTaskCard taskId={task.id} />
+                <FileTaskCard taskId={task.id} />
               </ListItem>
             ))}
           </List>

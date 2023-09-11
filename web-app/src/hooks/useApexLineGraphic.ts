@@ -5,7 +5,8 @@ export default function useApexLineGraphic(
   filterType: 0 | 1 | 2,
   priority: boolean
 ) {
-  const { tasksArray, archivedTasksArray, currentDate } = useTasksContext();
+  const { activeTasksArray, archivedTasksArray, currentDate } =
+    useTasksContext();
   const [allTasks, setAllTasks] = useState([] as TaskDataInterface[]);
   const [differenceInDays, setDifferenceInDais] = useState(0);
   const [tasksCompletedOnTime, setTasksCompletedOnTime] = useState(
@@ -15,17 +16,17 @@ export default function useApexLineGraphic(
   const [categories, setCategories] = useState([] as string[]);
 
   useEffect(() => {
-    if (tasksArray && archivedTasksArray) {
+    if (activeTasksArray && archivedTasksArray) {
       if (priority) {
         setAllTasks(() => {
-          const array = [...tasksArray, ...archivedTasksArray];
+          const array = [...activeTasksArray, ...archivedTasksArray];
           return array.filter(
             (task) => task.progressStatus === 2 && task.priority
           );
         });
       } else {
         setAllTasks(() => {
-          const array = [...tasksArray, ...archivedTasksArray];
+          const array = [...activeTasksArray, ...archivedTasksArray];
           return array.filter((task) => task.progressStatus === 2);
         });
       }
@@ -38,7 +39,7 @@ export default function useApexLineGraphic(
     } else if (filterType === 2) {
       setDifferenceInDais(() => 89);
     }
-  }, [differenceInDays, tasksArray, archivedTasksArray, filterType]);
+  }, [differenceInDays, activeTasksArray, archivedTasksArray, filterType]);
 
   useEffect(() => {
     if (allTasks) {

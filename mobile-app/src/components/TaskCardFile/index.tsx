@@ -1,42 +1,17 @@
 import { Box, Button, Text } from "@gluestack-ui/themed";
-import { useNavigation } from "@react-navigation/native";
 import { Svg, Path } from "react-native-svg";
-import getTaskById from "../../utils/getTaskById";
-import { useEffect, useState } from "react";
-import { useTasksContext } from "../../providers/contexts/tasksContext";
+import useTaskCardFile from "../../hooks/useTaskCardFile";
 import useTaskCard from "../../hooks/useTaskCard";
 
-interface PropsTaskCardFileInterface {
-  taskId: string;
-}
-
 export default function TaskCardFile({ taskId }: PropsTaskCardFileInterface) {
-  const navigation = useNavigation();
-  const { archivedTasksArray } = useTasksContext();
-  const [task, setTask] = useState(getTaskById(archivedTasksArray, taskId));
-  const { handleDeleteTaskButton } = useTaskCard(taskId);
+  const {
+    task,
+    redirectEditTaskForm,
+    showDelayMessage,
+    handleDeleteTaskButton,
+  } = useTaskCardFile(taskId);
 
-  useEffect(() => {
-    setTask(getTaskById(archivedTasksArray, taskId));
-  }, [archivedTasksArray]);
-
-  function redirectEditTaskForm() {
-    navigation.navigate("editTask", { taskId, prevScreen: "file" });
-  }
-
-  function showDelayMessage() {
-    if (task?.deadline && task.finishedDate) {
-      if (
-        new Date(task?.deadline).getTime() -
-          new Date(task.finishedDate).getTime() <
-        0
-      ) {
-        return "flex";
-      } else {
-        return "none";
-      }
-    }
-  }
+  const { sendArchiveTask } = useTaskCard(taskId);
   return (
     <Button
       backgroundColor="#CBD5E0"
@@ -103,7 +78,7 @@ export default function TaskCardFile({ taskId }: PropsTaskCardFileInterface) {
           </Svg>
         </Button>
         <Button
-          onPress={() => console.log("vc clicou para deletar uma task")}
+          onPress={() => sendArchiveTask(true)}
           backgroundColor="transparent"
           sx={{
             ":active": {

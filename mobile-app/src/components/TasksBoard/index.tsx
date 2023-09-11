@@ -1,12 +1,6 @@
 import { Box, FlatList, Heading } from "@gluestack-ui/themed";
 import TaskCard from "../TaskCard";
 import { useTasksContext } from "../../providers/contexts/tasksContext";
-import { ListRenderItemInfo } from "react-native";
-
-interface PropsTaskBoardInterface {
-  title: string;
-  progressStatus: 0 | 1 | 2;
-}
 
 export default function TasksBoard({
   title,

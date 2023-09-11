@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 
 export default function useDashboardPage() {
   const [dateFilter, setDateFilter] = useState<0 | 1 | 2>(0);
-  const { tasksArray, archivedTasksArray, currentDate } = useTasksContext();
+  const { activeTasksArray, archivedTasksArray, currentDate } =
+    useTasksContext();
   const [allTasks, setAllTasks] = useState([] as TaskDataInterface[]);
   const [tasksStatistics, setTasksStatistics] = useState({
     total: {
@@ -29,10 +30,10 @@ export default function useDashboardPage() {
   });
 
   useEffect(() => {
-    if (tasksArray && archivedTasksArray) {
-      setAllTasks(() => [...tasksArray, ...archivedTasksArray]);
+    if (activeTasksArray && archivedTasksArray) {
+      setAllTasks(() => [...activeTasksArray, ...archivedTasksArray]);
     }
-  }, [tasksArray, archivedTasksArray]);
+  }, [activeTasksArray, archivedTasksArray]);
 
   useEffect(() => {
     if (allTasks) {

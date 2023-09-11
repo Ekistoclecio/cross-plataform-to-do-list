@@ -16,4 +16,4 @@ export default function formatDate(date: Date) {
     formatedDay = day.toString();
   }
   return `${year}-${formatedMonth}-${formatedDay}`;
-}
+} // Retorna a data no formato YYYY-MM-DD

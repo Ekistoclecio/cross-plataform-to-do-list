@@ -12,6 +12,7 @@ interface PropsEditTaskModalInterface {
   isOpen: boolean;
   onClose: () => void;
   taskId: string;
+  file?: boolean;
 }
 
 interface PropsTaskCardInterface {

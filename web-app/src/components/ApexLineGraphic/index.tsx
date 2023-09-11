@@ -1,9 +1,7 @@
 "use client";
 
-import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import { Flex } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import { lineChartConfig } from "@/config/apexCharts";
 import useApexLineGraphic from "@/hooks/useApexLineGraphic";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import useEditTaskModal from "@/hooks/useEditTaskModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -26,6 +28,7 @@ export default function EditTaskModal({
   isOpen,
   onClose,
   taskId,
+  file,
 }: PropsEditTaskModalInterface) {
   const { currentDate } = useTasksContext();
   const {
@@ -37,7 +40,7 @@ export default function EditTaskModal({
     onChangeInputs,
     handleSaveButton,
     handleEditButton,
-  } = useEditTaskModal(taskId, onClose);
+  } = useEditTaskModal(taskId, onClose, file);
 
   return (
     <Modal isOpen={isOpen} onClose={closeEditModal}>

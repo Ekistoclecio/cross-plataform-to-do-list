@@ -6,7 +6,7 @@ import Logo from "../Logo";
 import MenuTopBar from "../MenuTopBar";
 import NotificationAlert from "../NotificationAlert";
 import UserAvatarTopBar from "../UserAvatarTopBar";
-import ArchiveIcon from "../ArchiveIcon";
+import FileIcon from "../FileIcon";
 
 export default function TopBar() {
   return (
@@ -23,7 +23,7 @@ export default function TopBar() {
         <MenuTopBar />
       </Flex>
       <Flex alignItems={"center"}>
-        <ArchiveIcon />
+        <FileIcon />
         <NotificationAlert />
         <UserAvatarTopBar />
       </Flex>

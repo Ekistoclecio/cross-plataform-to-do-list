@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 
-const regexMinCaracters = /^(?=(?:\S*\s*){1,})(?=\S+$)/; // Valida se a string não esta vazia e tem pelo menos um caractere diferente de espaço em branco
+const regexMinCaracters = /[^\s]{6,}/;
 
 const regexToVarifyEmail =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -56,7 +56,7 @@ export default function useAuthForm({
       toast({
         title: "Dados Invalidos",
         description:
-          "Cada campo do formulário deve conter no mínimo 6 caracteres.",
+          "Cada campo do formulário deve conter no mínimo 1 caractere.",
         status: "error",
         duration: 5000,
         isClosable: true,

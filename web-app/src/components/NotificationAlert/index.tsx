@@ -19,7 +19,7 @@ import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import useNotificationAlert from "@/hooks/useNotificationAlert";
 
 export default function NotificationAlert() {
-  const { tasksArray } = useTasksContext();
+  const { activeTasksArray } = useTasksContext();
   const { newNotification } = useNotificationAlert();
 
   return (
@@ -68,7 +68,7 @@ export default function NotificationAlert() {
           <PopoverHeader>Notificações</PopoverHeader>
           <PopoverBody padding={0}>
             <List>
-              {tasksArray.map((task) => {
+              {activeTasksArray.map((task) => {
                 if (task.notificationStatus != 0 && task.progressStatus != 2) {
                   return (
                     <ListItem key={task.id}>

@@ -1,11 +1,22 @@
+"use client";
+
 import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import useTaskCard from "@/hooks/useTaskCard";
 import getTaskById from "@/utils/getTaskById";
-import { Button, Circle, Flex, Icon, Text, Tooltip } from "@chakra-ui/react";
+import {
+  Button,
+  Circle,
+  Flex,
+  Icon,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import ConfirmeDeleteTaskAlert from "../ConfirmDeleteTaskAlert";
+import EditTaskModal from "../EditTaskModal";
 
-export default function ArchiveTaskCard({
+export default function FileTaskCard({
   taskId,
 }: PropsArchiveTaskCardInterface) {
   const { archivedTasksArray } = useTasksContext();
@@ -18,6 +29,11 @@ export default function ArchiveTaskCard({
     sendDeleteTask,
     sendArchiveTask,
   } = useTaskCard(taskId);
+  const {
+    isOpen: isOpenEditModalByFile,
+    onOpen: onOpenEditModalByFile,
+    onClose: onCloseEditModalByFile,
+  } = useDisclosure();
 
   return (
     <>
@@ -32,6 +48,8 @@ export default function ArchiveTaskCard({
         borderRadius={5}
         minWidth={"216px"}
         flexDirection={{ base: "column", md: "row" }}
+        _hover={{ backgroundColor: "gray.100", cursor: "pointer" }}
+        onClick={onOpenEditModalByFile}
       >
         <Flex
           overflow={"hidden"}
@@ -107,23 +125,29 @@ export default function ArchiveTaskCard({
               flexDirection={{ base: "column", lg: "row" }}
             >
               <Flex>
-                <Circle
-                  marginTop={"1px"}
-                  marginRight={1}
-                  fontWeight={"bold"}
-                  size={5}
-                  color={"gray.200"}
-                  backgroundColor={"rgb(180,0,0)"}
-                  display={
-                    new Date(task?.deadline!).getTime() -
-                      new Date(task?.finishedDate || "").getTime() <
-                    0
-                      ? "flex"
-                      : "none"
-                  }
+                <Tooltip
+                  label="Tarefa concluida com atraso"
+                  placement="right"
+                  backgroundColor={"gray.800"}
                 >
-                  !
-                </Circle>
+                  <Circle
+                    marginTop={"1px"}
+                    marginRight={1}
+                    fontWeight={"bold"}
+                    size={5}
+                    color={"gray.200"}
+                    backgroundColor={"rgb(180,0,0)"}
+                    display={
+                      new Date(task?.deadline!).getTime() -
+                        new Date(task?.finishedDate || "").getTime() <
+                      0
+                        ? "flex"
+                        : "none"
+                    }
+                  >
+                    !
+                  </Circle>
+                </Tooltip>
                 <Text marginRight={3} fontWeight={14}>
                   Data de conclusão: {task?.finishedDate}
                 </Text>
@@ -149,6 +173,12 @@ export default function ArchiveTaskCard({
         cancelRef={cancelRef}
         taskTitle={task?.title || ""}
         sendDeleteTask={sendDeleteTask}
+      />
+      <EditTaskModal
+        isOpen={isOpenEditModalByFile}
+        onClose={onCloseEditModalByFile}
+        taskId={taskId}
+        file={true}
       />
     </>
   );

@@ -1,9 +1,9 @@
 "use client";
 
+import useUserAvatarTopBar from "@/hooks/useUserAvatarTopBar";
 import {
   Avatar,
   Button,
-  Circle,
   Flex,
   Icon,
   Popover,
@@ -13,21 +13,11 @@ import {
   PopoverTrigger,
   Text,
 } from "@chakra-ui/react";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function UserAvatarTopBar() {
   const { data: session } = useSession();
-  const router = useRouter();
-
-  async function logout() {
-    await signOut({
-      redirect: false,
-    });
-
-    router.replace("/");
-  }
+  const { logout } = useUserAvatarTopBar();
 
   return (
     <Popover>
@@ -44,9 +34,6 @@ export default function UserAvatarTopBar() {
           fontWeight={"medium"}
           padding={1}
         >
-          {/* <Circle fontWeight={"bold"} size="50px" bg="#141730" fontSize={16}>
-            {"EL"}
-          </Circle> */}
           <Avatar name={session?.user.name + " " + session?.user.lastName} />
           <Text
             marginLeft={2}

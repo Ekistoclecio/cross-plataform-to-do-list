@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTasksContext } from "../providers/contexts/tasksContext";
 import { useUserContext } from "../providers/contexts/userContext";
 import getTaskById from "../utils/getTaskById";
@@ -11,10 +11,14 @@ export default function useTaskCard(taskId: string) {
   const { getCurrentDate, userSession, logout } = useUserContext();
   const { activeTasksArray, archivedTasksArray, updateTasks } =
     useTasksContext();
-  const [task, setTask] = useState(
-    getTaskById(activeTasksArray.concat(archivedTasksArray), taskId)
-  );
+  const [task, setTask] = useState<TaskDataInterface | null>(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (activeTasksArray && archivedTasksArray) {
+      setTask(getTaskById(activeTasksArray.concat(archivedTasksArray), taskId));
+    }
+  }, [activeTasksArray, archivedTasksArray]);
 
   function redirectEditTask() {
     navigation.navigate("editTask", { taskId, prevScreen: "kanbanList" });
@@ -73,12 +77,17 @@ export default function useTaskCard(taskId: string) {
     );
   }
 
-  async function sendArchiveTask() {
+  async function sendArchiveTask(file?: boolean) {
     if (userSession?.token) {
       const response = await archiveTask(userSession.token, taskId);
       if (response?.status === 200) {
-        Alert.alert("Arquivado", "Tarefa arquivada com sucesso");
-        updateTasks();
+        if (file) {
+          Alert.alert("Sucesso", "Tarefa desarquivada com sucesso");
+          updateTasks();
+        } else {
+          Alert.alert("Arquivado", "Tarefa arquivada com sucesso");
+          updateTasks();
+        }
       } else if (response?.status === 401) {
         logout();
       }

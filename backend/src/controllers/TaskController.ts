@@ -130,6 +130,7 @@ export class TaskController {
     );
 
     try {
+      const currDataTask = await taskRepository.findOneBy({ id: Task_id });
       const task = await taskRepository.update(
         {
           id: Task_id,
@@ -146,7 +147,12 @@ export class TaskController {
           priority,
           notificationStatus: notificationStatus,
           notificationVisualization: notificationStatus === 0 ? true : false,
-          finishedDate: progressStatus === 2 ? getCurrentDate() : null,
+          finishedDate:
+            currDataTask.finishedDate != null
+              ? currDataTask.finishedDate
+              : progressStatus === 2
+              ? getCurrentDate()
+              : null,
         }
       );
 

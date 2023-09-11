@@ -59,43 +59,64 @@ export default function useCreateTaskModal({
     setCreateTaskForm({ ...createTaskForm, [e.target.name]: e.target.value });
   }
 
-  async function handleCreateNewTask() {
-    if (session?.user.token) {
-      const response = await createNewTask(createTaskForm, session.user.token);
-      if (response?.status === 201) {
-        toast({
-          title: "Nova tarefa criada com sucesso",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-          position: "top",
-        });
-        updateTasks();
-      } else if (response?.status === 401) {
-        await signOut({
-          redirect: false,
-        });
-
-        router.replace("/");
-      } else {
-        toast({
-          title: "Erro na criação da tarefa",
-          description:
-            "Ocorreu um erro ou tentar criar a nova tarefa, verifique os dados e tente novamente",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "top",
-        });
-      }
+  function validateFormData() {
+    const regexMinCaracters = /[^\s]{1,}/;
+    if (!regexMinCaracters.test(createTaskForm.title)) {
+      toast({
+        title: "O titulo da tarefa não pode ser vazio",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return false;
+    } else {
+      return true;
     }
-    onClose();
-    setCreateTaskForm({
-      title: "",
-      description: "",
-      priority: false,
-      deadline: "",
-    });
+  }
+
+  async function handleCreateNewTask() {
+    if (validateFormData()) {
+      if (session?.user.token) {
+        const response = await createNewTask(
+          createTaskForm,
+          session.user.token
+        );
+        if (response?.status === 201) {
+          toast({
+            title: "Nova tarefa criada com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+          updateTasks();
+        } else if (response?.status === 401) {
+          await signOut({
+            redirect: false,
+          });
+
+          router.replace("/");
+        } else {
+          toast({
+            title: "Erro na criação da tarefa",
+            description:
+              "Ocorreu um erro ou tentar criar a nova tarefa, tente novamente",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+        }
+      }
+      onClose();
+      setCreateTaskForm({
+        title: "",
+        description: "",
+        priority: false,
+        deadline: "",
+      });
+    }
   }
 
   return {

@@ -7,78 +7,16 @@ import {
   CheckboxIndicator,
   CheckboxLabel,
   Input,
-  InputField,
   Text,
   Textarea,
-  TextareaInput,
 } from "@gluestack-ui/themed";
 import DatePicker from "../DatePicker";
-import { Alert, TextInput } from "react-native";
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import formatDate from "../../utils/formatDate";
-import { regexMinCaracters } from "../AuthForm";
-import { useUserContext } from "../../providers/contexts/userContext";
-import createNewTask from "../../services/api/createNewTask";
-import { useTasksContext } from "../../providers/contexts/tasksContext";
+import { TextInput } from "react-native";
+import useCreateTaskForm from "../../hooks/useCreateTaskForm";
 
 export default function CreateTaskForm() {
-  const navegation = useNavigation();
-  const { userSession, logout } = useUserContext();
-  const { updateTasks } = useTasksContext();
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    deadline: formatDate(new Date()),
-    priority: false,
-  });
-
-  function validateFormData() {
-    if (!regexMinCaracters.test(formData.title)) {
-      Alert.alert(
-        "Titulo invalido",
-        "O titulo da tarefa deve conter pelo menos 6 caracteres"
-      );
-      return false;
-    }
-    return true;
-  }
-
-  async function handleCreateNewTask() {
-    if (validateFormData()) {
-      if (userSession?.token) {
-        const response = await createNewTask(formData, userSession.token);
-        if (response?.status === 201) {
-          Alert.alert("Sucesso", "Tarefa criada com sucesso");
-          setFormData({
-            title: "",
-            description: "",
-            priority: false,
-            deadline: formatDate(new Date()),
-          });
-          updateTasks();
-        } else if (response?.status === 401) {
-          logout();
-        } else {
-          Alert.alert(
-            "Erro na criação da tarefa",
-            "Ocorreu um erro ou tentar criar a nova tarefa, verifique os dados e tente novamente"
-          );
-        }
-      }
-    }
-  }
-
-  function handleCancelButton() {
-    setFormData({
-      title: "",
-      description: "",
-      priority: false,
-      deadline: formatDate(new Date()),
-    });
-    navegation.navigate("kanbanList");
-  }
-
+  const { formData, setFormData, handleCancelButton, handleCreateNewTask } =
+    useCreateTaskForm();
   return (
     <Box height={"100%"} justifyContent="space-between">
       <Box>

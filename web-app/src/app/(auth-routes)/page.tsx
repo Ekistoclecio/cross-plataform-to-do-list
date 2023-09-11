@@ -2,7 +2,7 @@
 
 import AuthForm from "../../components/AuthForm";
 
-import { Image, Text, Flex, chakra } from "@chakra-ui/react";
+import { Image, Text, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import AuthBackgroundImg from "../../assets/image/AuthBackgroundImg.jpg";
 

@@ -2,20 +2,21 @@ import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import { useEffect, useState } from "react";
 
 export default function useApexPieGraphic(priority: boolean) {
-  const { tasksArray, archivedTasksArray, currentDate } = useTasksContext();
+  const { activeTasksArray, archivedTasksArray, currentDate } =
+    useTasksContext();
   const [allTasks, setAllTasks] = useState([] as TaskDataInterface[]);
   const [series, setSeries] = useState([] as number[]);
   useEffect(() => {
-    if (tasksArray && archivedTasksArray && priority) {
+    if (activeTasksArray && archivedTasksArray && priority) {
       setAllTasks(() =>
-        [...tasksArray, ...archivedTasksArray].filter(
+        [...activeTasksArray, ...archivedTasksArray].filter(
           (task) => task.priority == true
         )
       );
-    } else if (tasksArray && archivedTasksArray) {
-      setAllTasks(() => [...tasksArray, ...archivedTasksArray]);
+    } else if (activeTasksArray && archivedTasksArray) {
+      setAllTasks(() => [...activeTasksArray, ...archivedTasksArray]);
     }
-  }, [tasksArray, archivedTasksArray]);
+  }, [activeTasksArray, archivedTasksArray]);
 
   useEffect(() => {
     setSeries(() => [

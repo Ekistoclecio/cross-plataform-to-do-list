@@ -2,11 +2,6 @@ import { Box, Button, Text } from "@gluestack-ui/themed";
 import { Svg, Path } from "react-native-svg";
 import useTaskCard from "../../hooks/useTaskCard";
 
-interface PropsTaskCardInterface {
-  archivable: boolean;
-  taskId: string;
-}
-
 export default function TaskCard({
   archivable,
   taskId,
@@ -26,7 +21,7 @@ export default function TaskCard({
       marginHorizontal={12}
       marginBottom={12}
       borderRadius={12}
-      height={160}
+      height={120}
       flexDirection="column"
       alignItems="center"
       justifyContent="space-between"
@@ -41,7 +36,7 @@ export default function TaskCard({
         color="#000"
         alignSelf="flex-start"
         fontWeight="bold"
-        numberOfLines={3}
+        numberOfLines={2}
       >
         {task?.title}
       </Text>
@@ -61,19 +56,20 @@ export default function TaskCard({
             !
           </Text>
           <Text color="#000">Prazo: {task?.deadline}</Text>
-
-          <Text
-            backgroundColor="#f00"
-            width={88}
-            textAlign="center"
-            borderRadius={4}
-            fontWeight="bold"
-            color="#fff"
-            marginLeft={4}
-            display={task?.priority ? "flex" : "none"}
-          >
-            Prioridade
-          </Text>
+          <Box flex={1} alignItems="center">
+            <Text
+              backgroundColor="#f00"
+              width={88}
+              textAlign="center"
+              borderRadius={4}
+              fontWeight="bold"
+              color="#fff"
+              marginLeft={4}
+              display={task?.priority ? "flex" : "none"}
+            >
+              Prioridade
+            </Text>
+          </Box>
         </Box>
         <Box
           width={"100%"}
@@ -100,7 +96,7 @@ export default function TaskCard({
           {archivable ? (
             <Button
               flex={1}
-              onPress={sendArchiveTask}
+              onPress={() => sendArchiveTask(false)}
               backgroundColor="transparent"
               sx={{
                 ":active": {

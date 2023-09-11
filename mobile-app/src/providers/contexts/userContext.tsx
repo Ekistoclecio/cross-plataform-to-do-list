@@ -1,6 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import listActiveTasks from "../../services/api/listActiveTasks";
-import listArchivedTasks from "../../services/api/listArchivedTasks";
 import signIn from "../../services/api/signIn";
 import { Alert } from "react-native";
 import setUser from "../../storage/user/setUserStorage";
@@ -39,7 +37,6 @@ export const UserProvider = (props: any) => {
       setUserSession(userObj);
     } else {
       Alert.alert("Falha no Login", "Verifique os dados e tente novamente");
-      throw new Error();
     }
   }
 

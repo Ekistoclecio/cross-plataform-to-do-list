@@ -2,6 +2,7 @@ import { Box, Button, Heading, ScrollView, Text } from "@gluestack-ui/themed";
 import TopBar from "../../components/TopBar";
 import TasksBoard from "../../components/TasksBoard";
 import { useNavigation } from "@react-navigation/native";
+
 export default function KanbanList() {
   const navigation = useNavigation();
 

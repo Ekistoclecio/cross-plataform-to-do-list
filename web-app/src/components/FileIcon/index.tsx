@@ -1,7 +1,9 @@
-import { Button, Circle, Icon, useDisclosure } from "@chakra-ui/react";
-import ArchiveModal from "../ArchiveModal";
+"use client";
 
-export default function ArchiveIcon() {
+import { Button, Circle, Icon, useDisclosure } from "@chakra-ui/react";
+import ArchiveModal from "../FileModal";
+
+export default function FileIcon() {
   const {
     onOpen: onOpenArchiveModal,
     isOpen: isOpenArchiveModal,

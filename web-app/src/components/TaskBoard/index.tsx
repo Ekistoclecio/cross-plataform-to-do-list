@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Heading, List, ListItem, Text } from "@chakra-ui/react";
+import { Flex, Heading, List, ListItem } from "@chakra-ui/react";
 import TaskCard from "../TaskCard";
 import { useTasksContext } from "@/Providers/contexts/tasksContext";
 import { Droppable, Draggable } from "react-beautiful-dnd";
@@ -9,7 +9,7 @@ export default function TaskBoard({
   title,
   progressStatus,
 }: PropsTaskBoardInterface) {
-  const { tasksArray } = useTasksContext();
+  const { activeTasksArray } = useTasksContext();
 
   return (
     <>
@@ -51,8 +51,9 @@ export default function TaskBoard({
                 as={"ul"}
                 {...provided.droppableProps}
                 ref={provided.innerRef}
+                height={"100%"}
               >
-                {tasksArray.map((task, index) => {
+                {activeTasksArray.map((task, index) => {
                   if (progressStatus === task.progressStatus) {
                     return (
                       <Draggable

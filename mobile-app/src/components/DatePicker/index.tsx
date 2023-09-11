@@ -1,49 +1,17 @@
-import { useEffect, useState } from "react";
 import { Button, Text } from "@gluestack-ui/themed";
 import { SafeAreaView } from "react-native/";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useUserContext } from "../../providers/contexts/userContext";
-import formatDate from "../../utils/formatDate";
-
-interface PropsDatePickerInterface {
-  isReadOnly: boolean;
-  setFormData: (val: any) => void;
-  formData: {
-    title: string;
-    description: string;
-    deadline: string;
-    priority: boolean;
-  };
-}
+import useDatePicker from "../../hooks/useDatePicker";
 
 export default function DatePicker({
   isReadOnly,
   setFormData,
   formData,
 }: PropsDatePickerInterface) {
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
-  const [formatedDate, setFormatedDate] = useState(formatDate(date));
-
-  useEffect(() => {
-    setFormData(() => ({ ...formData, deadline: formatedDate }));
-  }, [formatedDate, date]);
-
-  const onChange = (event: any, selectedDate: any) => {
-    setShow(false);
-    setFormatedDate(formatDate(selectedDate));
-  };
-
-  const showMode = (currentMode: any) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
+  const { showDatepicker, show, date, onChange, mode } = useDatePicker(
+    setFormData,
+    formData
+  );
   return (
     <SafeAreaView>
       <Button

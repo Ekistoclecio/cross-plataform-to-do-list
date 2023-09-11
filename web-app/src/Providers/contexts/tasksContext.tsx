@@ -1,14 +1,14 @@
-import listUserTasks from "@/services/api/listUserTasks";
+import listActiveTasks from "@/services/api/listActiveTasks";
 import { signOut, useSession } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import listArchiveUserTasks from "@/services/api/listArchivedTasks";
 
 interface TasksContextInterface {
-  tasksArray: TaskDataInterface[];
+  activeTasksArray: TaskDataInterface[];
   archivedTasksArray: TaskDataInterface[];
   currentDate: string;
-  setTasksArray: (val: any) => void;
+  setActiveTasksArray: (val: any) => void;
   setArchivedTasksArray: (val: any) => void;
   updateTasks: () => void;
 }
@@ -22,7 +22,9 @@ const Provider = tasksContext.Provider;
 export const TasksProvider = (props: any) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [tasksArray, setTasksArray] = useState([] as TaskDataInterface[]);
+  const [activeTasksArray, setActiveTasksArray] = useState(
+    [] as TaskDataInterface[]
+  );
   const [archivedTasksArray, setArchivedTasksArray] = useState(
     [] as TaskDataInterface[]
   );
@@ -30,7 +32,7 @@ export const TasksProvider = (props: any) => {
 
   async function updateTasks() {
     if (session?.user.token) {
-      const responseTasksActive = await listUserTasks(session.user.token);
+      const responseTasksActive = await listActiveTasks(session.user.token);
       if (responseTasksActive?.status === 401) {
         await signOut({
           redirect: false,
@@ -40,7 +42,7 @@ export const TasksProvider = (props: any) => {
         return;
       }
 
-      const ActiveTasksArray = responseTasksActive?.data.sort(
+      const TasksArray = responseTasksActive?.data.sort(
         (val1: TaskDataInterface, val2: TaskDataInterface) => {
           const date1 = new Date(val1.deadline as string);
           const date2 = new Date(val2.deadline as string);
@@ -48,7 +50,7 @@ export const TasksProvider = (props: any) => {
           return date1.getTime() - date2.getTime();
         }
       );
-      setTasksArray(() => ActiveTasksArray);
+      setActiveTasksArray(() => TasksArray);
 
       const responseTasksArchived = await listArchiveUserTasks(
         session.user.token
@@ -96,10 +98,10 @@ export const TasksProvider = (props: any) => {
   return (
     <Provider
       value={{
-        tasksArray,
+        activeTasksArray,
         archivedTasksArray,
         currentDate,
-        setTasksArray,
+        setActiveTasksArray,
         setArchivedTasksArray,
         updateTasks,
       }}

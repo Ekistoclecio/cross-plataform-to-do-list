@@ -1,4 +1,4 @@
-import { Box, Text } from "@gluestack-ui/themed";
+import { Box } from "@gluestack-ui/themed";
 import Logo from "../Logo";
 import UserAvatarTopBar from "../UserAvatarTopBar";
 

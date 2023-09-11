@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-export default async function listUserTasks(token: string) {
+export default async function listActiveTasks(token: string) {
   try {
     const response: AxiosResponse = await axios.get("http://localhost:8080", {
       headers: {
