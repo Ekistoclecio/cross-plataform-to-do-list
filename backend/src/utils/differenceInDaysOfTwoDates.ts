@@ -5,7 +5,6 @@ export default function differenceInDaysOfTwoDates(
   const diffInMs = new Date(date1).getTime() - new Date(date2).getTime();
   const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-  console.log(diffInDays);
   if (diffInDays < 0) {
     return 2;
   } else if (diffInDays <= 3) {

@@ -11,58 +11,28 @@ import {
   Text,
   chakra,
 } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
 
-interface PropsAuthFormInterface {
-  newUser: boolean;
-  setNewUser: (e: boolean) => void;
-}
-
-interface LoginRegisterFormInterface {
-  name?: string;
-  lastName?: string;
-  userName: string;
-  email?: string;
-  password: string;
-  repeatPassword?: string;
-}
+import useAuthForm from "@/hooks/useAuthForm";
 
 export default function AuthForm({
   newUser,
   setNewUser,
 }: PropsAuthFormInterface) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showRepeatPassword, setRepeatShowPassword] = useState(false);
-  const [formData, setFormData] = useState<LoginRegisterFormInterface>({
-    name: "",
-    lastName: "",
-    userName: "",
-    email: "",
-    password: "",
-    repeatPassword: "",
+  const {
+    authFormData,
+    onChangeInputs,
+    showPassword,
+    setShowPassword,
+    showRepeatPassword,
+    setRepeatShowPassword,
+    handleBoxLoginRegister,
+    register,
+    handleSignIn,
+  } = useAuthForm({
+    newUser,
+    setNewUser,
   });
 
-  function handleBoxLoginRegister() {
-    setNewUser(!newUser);
-    setRepeatShowPassword(false);
-    setShowPassword(false);
-    setFormData({
-      name: "",
-      lastName: "",
-      userName: "",
-      email: "",
-      password: "",
-      repeatPassword: "",
-    });
-  }
-
-  function onChangeInputs(e: ChangeEvent<HTMLInputElement>) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
-  function sendForm() {
-    console.log(formData);
-  }
   return (
     <>
       <Box
@@ -88,7 +58,7 @@ export default function AuthForm({
           borderColor={"gray.500"}
           marginBottom={3}
           name="userName"
-          value={formData.userName}
+          value={authFormData.userName}
           onChange={onChangeInputs}
         ></Input>
         <InputGroup>
@@ -98,7 +68,7 @@ export default function AuthForm({
             color="gray.300"
             borderColor={"gray.500"}
             name="password"
-            value={formData.password}
+            value={authFormData.password}
             onChange={onChangeInputs}
             type={showPassword ? "text" : "password"}
           ></Input>
@@ -150,7 +120,7 @@ export default function AuthForm({
                 color="gray.300"
                 borderColor={"gray.500"}
                 name="repeatPassword"
-                value={formData.repeatPassword}
+                value={authFormData.repeatPassword}
                 onChange={onChangeInputs}
                 type={showRepeatPassword ? "text" : "password"}
               ></Input>
@@ -200,7 +170,7 @@ export default function AuthForm({
               borderColor={"gray.500"}
               onChange={onChangeInputs}
               name="name"
-              value={formData.name}
+              value={authFormData.name}
               marginBottom={3}
             ></Input>
             <Input
@@ -210,7 +180,7 @@ export default function AuthForm({
               borderColor={"gray.500"}
               onChange={onChangeInputs}
               name="lastName"
-              value={formData.lastName}
+              value={authFormData.lastName}
               marginBottom={3}
             ></Input>
             <Input
@@ -219,13 +189,13 @@ export default function AuthForm({
               color="gray.300"
               borderColor={"gray.500"}
               name="email"
-              value={formData.email}
+              value={authFormData.email}
               onChange={onChangeInputs}
             ></Input>
             <Flex flexDirection="column" alignItems={"center"} marginY={4}>
               <Button
                 colorScheme="blue"
-                onClick={sendForm}
+                onClick={register}
                 backgroundColor={"#4c5ee5"}
                 _hover={{ backgroundColor: "#3c4ed5" }}
               >
@@ -257,7 +227,7 @@ export default function AuthForm({
             <Flex flexDirection="column" alignItems={"center"} marginY={4}>
               <Button
                 colorScheme="blue"
-                onClick={sendForm}
+                onClick={handleSignIn}
                 backgroundColor={"#4c5ee5"}
                 _hover={{ backgroundColor: "#374ad0" }}
               >
@@ -265,19 +235,6 @@ export default function AuthForm({
               </Button>
             </Flex>
             <Flex flexDirection={"column"} alignItems={"center"} marginTop={4}>
-              <Flex alignItems={"center"} marginBottom={1}>
-                <Text fontSize={14} textColor={"gray.500"} fontWeight={"bold"}>
-                  Esqueceu sua senha?
-                </Text>
-                <chakra.button
-                  marginLeft={1}
-                  color={"#4c5ee5"}
-                  fontWeight={"bold"}
-                  fontSize={14}
-                >
-                  Clique aqui
-                </chakra.button>
-              </Flex>
               <Flex alignItems={"center"}>
                 <Text
                   fontSize={14}

@@ -8,10 +8,11 @@ import differenceInDaysOfTwoDates from "../utils/differenceInDaysOfTwoDates";
 export class TaskController {
   async create(req: Request, res: Response) {
     const { title, description, priority, deadline } = req.body;
-    const { User_id } = req.params;
 
     try {
-      const validated_User_id = await userRepository.findOneBy({ id: User_id });
+      const validated_User_id = await userRepository.findOneBy({
+        id: req.userId,
+      });
 
       if (!validated_User_id) {
         return res.status(404).json({ message: "Usuario não encontrado" });
@@ -31,9 +32,8 @@ export class TaskController {
         notificationStatus: notificationStatus,
         notificationVisualization: notificationStatus === 0 ? true : false,
         user: validated_User_id,
+        isArchived: false,
       });
-
-      console.log(newTask);
 
       await taskRepository.save(newTask);
 
@@ -47,31 +47,63 @@ export class TaskController {
   }
 
   async delete(req: Request, res: Response) {
-    const { Task_id, User_id } = req.params;
-
-    if (!this.validateUserTask(Task_id, User_id)) {
-      return res.status(404).json({ message: "Tarefa não encontrada" });
-    }
+    const { Task_id } = req.params;
 
     try {
-      const task = await taskRepository.findOne({
-        where: {
-          id: Task_id,
-          user: {
-            id: User_id,
-          },
+      const validatedTaskId = await taskRepository.findOneBy({
+        id: Task_id,
+        user: {
+          id: req.userId,
         },
       });
 
-      if (!task) {
+      if (!validatedTaskId) {
         return res.status(404).json({ message: "Tarefa não encontrada" });
       }
 
-      await taskRepository.delete({
+      const deletedTask = await taskRepository.delete({
         id: Task_id,
       });
 
-      return res.json({ message: "Tarefa excluida com sucesso" });
+      if (deletedTask.affected) {
+        console.log(deletedTask);
+        return res.json({ message: "Tarefa excluida com sucesso" });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
+  }
+
+  async archive(req: Request, res: Response) {
+    const { Task_id } = req.params;
+
+    try {
+      const validatedTaskId = await taskRepository.findOneBy({
+        id: Task_id,
+        user: {
+          id: req.userId,
+        },
+      });
+
+      if (!validatedTaskId) {
+        return res.status(404).json({ message: "Tarefa não encontrada" });
+      }
+
+      const task = await taskRepository.update(
+        {
+          id: Task_id,
+        },
+        {
+          isArchived: !validatedTaskId.isArchived,
+        }
+      );
+      if (task) {
+        return res.json({
+          status: !validatedTaskId.isArchived,
+          message: "Status de arquivo da tarefa atualizado com sucesso",
+        });
+      }
     } catch (error) {
       console.log(error);
       return res.sendStatus(500);
@@ -79,17 +111,16 @@ export class TaskController {
   }
 
   async update(req: Request, res: Response) {
-    const {
-      title,
-      description,
-      priority,
-      deadline,
-      progressStatus,
-      finishedDate,
-    } = req.body;
-    const { Task_id, User_id } = req.params;
+    const { title, description, priority, deadline, progressStatus } = req.body;
+    const { Task_id } = req.params;
+    const validateTaskId = await taskRepository.findBy({
+      id: Task_id,
+      user: {
+        id: req.userId,
+      },
+    });
 
-    if (!this.validateUserTask(Task_id, User_id)) {
+    if (!validateTaskId) {
       return res.status(404).json({ message: "Tarefa não encontrada" });
     }
 
@@ -103,10 +134,11 @@ export class TaskController {
         {
           id: Task_id,
           user: {
-            id: User_id,
+            id: req.userId,
           },
         },
         {
+          isArchived: progressStatus !== 2 ? false : true,
           progressStatus,
           title,
           description,
@@ -114,7 +146,7 @@ export class TaskController {
           priority,
           notificationStatus: notificationStatus,
           notificationVisualization: notificationStatus === 0 ? true : false,
-          finishedDate,
+          finishedDate: progressStatus === 2 ? getCurrentDate() : null,
         }
       );
 
@@ -129,9 +161,15 @@ export class TaskController {
 
   async progressStatusPatch(req: Request, res: Response) {
     const { progressStatus } = req.body;
-    const { User_id, Task_id } = req.params;
+    const { Task_id } = req.params;
 
-    if (!this.validateUserTask(Task_id, User_id)) {
+    const validateTaskId = await taskRepository.findBy({
+      id: Task_id,
+      user: {
+        id: req.userId,
+      },
+    });
+    if (!validateTaskId) {
       return res.status(404).json({ message: "Tarefa não encontrada" });
     }
 
@@ -148,7 +186,7 @@ export class TaskController {
           {
             id: Task_id,
             user: {
-              id: User_id,
+              id: req.userId,
             },
           },
           {
@@ -161,7 +199,7 @@ export class TaskController {
           {
             id: Task_id,
             user: {
-              id: User_id,
+              id: req.userId,
             },
           },
           {
@@ -183,9 +221,15 @@ export class TaskController {
   }
 
   async notificationStatusPatch(req: Request, res: Response) {
-    const { User_id, Task_id } = req.params;
+    const { Task_id } = req.params;
+    const validateTaskId = await taskRepository.findBy({
+      id: Task_id,
+      user: {
+        id: req.userId,
+      },
+    });
 
-    if (!this.validateUserTask(Task_id, User_id)) {
+    if (!validateTaskId) {
       return res.status(404).json({ message: "Tarefa não encontrada" });
     }
 
@@ -194,7 +238,7 @@ export class TaskController {
         {
           id: Task_id,
           user: {
-            id: User_id,
+            id: req.userId,
           },
         },
         {
@@ -212,14 +256,5 @@ export class TaskController {
       console.log(error);
       return res.sendStatus(500);
     }
-  }
-
-  async validateUserTask(Task_id: string, User_id: string) {
-    return await taskRepository.findOneBy({
-      id: Task_id,
-      user: {
-        id: User_id,
-      },
-    });
   }
 }

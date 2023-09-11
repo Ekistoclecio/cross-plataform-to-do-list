@@ -1,5 +1,6 @@
 "use client";
 
+import useCreateTaskModal from "@/hooks/useCreateTaskModal";
 import {
   Text,
   Button,
@@ -15,52 +16,25 @@ import {
   Box,
   Textarea,
   Checkbox,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-
-interface CreateTaskModalInterface {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 export default function CreateTaskModal({
   isOpen,
   onClose,
-}: CreateTaskModalInterface) {
-  function CreateNewTask() {
-    onClose();
-    console.log("CRIAR NOVA TAREFA");
-  }
-
-  const [currentDate, setCurrentDate] = useState("");
-
-  useEffect(() => {
-    const date = new Date();
-    const year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let formatedMonth;
-    let formatedDay;
-
-    if (month < 10) {
-      formatedMonth = `0${month}`;
-    } else {
-      formatedMonth = month;
-    }
-    if (day < 10) {
-      formatedDay = `0${day}`;
-    } else {
-      formatedDay = day;
-    }
-
-    setCurrentDate(`${year}-${formatedMonth}-${formatedDay}`);
-  }, []);
+}: PropsCreateTaskModalInterface) {
+  const {
+    currentDate,
+    handleCreateNewTask,
+    onChangeInputs,
+    createTaskForm,
+    closeModal,
+  } = useCreateTaskModal({
+    isOpen,
+    onClose,
+  });
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalOverlay backgroundColor={"rgba(0,0,0,0.6)"} />
       <ModalContent
         minWidth={"min-content"}
@@ -84,6 +58,9 @@ export default function CreateTaskModal({
               borderRadius={"md"}
               _hover={{ borderColor: "none" }}
               placeholder="Dê um titulo para sua tarefa"
+              value={createTaskForm.title}
+              onChange={onChangeInputs}
+              name="title"
             />
           </Box>
           <Box marginBottom={6}>
@@ -95,6 +72,18 @@ export default function CreateTaskModal({
               size={"sm"}
               height={"120px"}
               _hover={{ borderColor: "none" }}
+              value={createTaskForm.description}
+              onChange={onChangeInputs}
+              name="description"
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#3d415a",
+                  borderRadius: "24px",
+                },
+              }}
             ></Textarea>
           </Box>
           <Flex marginBottom={6} alignItems={"center"}>
@@ -107,6 +96,9 @@ export default function CreateTaskModal({
               size="sm"
               borderRadius={"md"}
               _hover={{ borderColor: "none" }}
+              value={createTaskForm.deadline}
+              onChange={onChangeInputs}
+              name="deadline"
               min={currentDate}
               css={{
                 "&::-webkit-calendar-picker-indicator": {
@@ -117,7 +109,13 @@ export default function CreateTaskModal({
               }}
             ></Input>
           </Flex>
-          <Checkbox>Definir essa tarefa como prioridade.</Checkbox>
+          <Checkbox
+            checked={createTaskForm.priority}
+            onChange={onChangeInputs}
+            name="priority"
+          >
+            Definir essa tarefa como prioridade.
+          </Checkbox>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -125,7 +123,7 @@ export default function CreateTaskModal({
             _hover={{ backgroundColor: "gray.700" }}
             mr={3}
             color={"gray.300"}
-            onClick={onClose}
+            onClick={closeModal}
           >
             Cancelar
           </Button>
@@ -134,7 +132,7 @@ export default function CreateTaskModal({
             backgroundColor={"#4c5ee5"}
             maxWidth={"min-content"}
             _hover={{ backgroundColor: "#374ad0" }}
-            onClick={CreateNewTask}
+            onClick={handleCreateNewTask}
           >
             Criar
           </Button>

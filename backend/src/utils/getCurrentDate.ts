@@ -16,6 +16,5 @@ export default function getCurrentDate() {
     mm = (today.getMonth() + 1).toString();
   }
 
-  console.log(yyyy + "-" + mm + "-" + dd);
   return yyyy + "-" + mm + "-" + dd;
 }

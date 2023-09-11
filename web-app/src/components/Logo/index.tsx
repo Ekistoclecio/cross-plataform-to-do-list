@@ -1,6 +1,6 @@
 "use client";
 
-import { TaskClipboardIcon } from "@/assets/Icons";
+import { TaskClipboardIcon } from "@/assets/icons";
 import { Link } from "@chakra-ui/next-js";
 import { Box, Icon, Text } from "@chakra-ui/react";
 

@@ -1,14 +1,16 @@
 "use client";
 
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-
+import { Flex, Heading, List, ListItem, Text } from "@chakra-ui/react";
 import TaskCard from "../TaskCard";
+import { useTasksContext } from "@/Providers/contexts/tasksContext";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 
-interface TaskBoardInterface {
-  title: string;
-}
+export default function TaskBoard({
+  title,
+  progressStatus,
+}: PropsTaskBoardInterface) {
+  const { tasksArray } = useTasksContext();
 
-export default function TaskBoard({ title }: TaskBoardInterface) {
   return (
     <>
       <Flex
@@ -43,12 +45,42 @@ export default function TaskBoard({ title }: TaskBoardInterface) {
             },
           }}
         >
-          <TaskCard
-            title="testando o tamanho maximo da criação do titulo de uma task que podera ter um numero maximo de 128 caracteres exatamente aaaaaaaa"
-            isImportant
-            deadline="22/03/2023"
-            expired={true}
-          />
+          <Droppable droppableId={`${progressStatus}`}>
+            {(provided) => (
+              <List
+                as={"ul"}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {tasksArray.map((task, index) => {
+                  if (progressStatus === task.progressStatus) {
+                    return (
+                      <Draggable
+                        key={task.id}
+                        draggableId={task.id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <ListItem
+                            as={"li"}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <TaskCard
+                              archivable={progressStatus === 2 ? true : false}
+                              taskId={task.id}
+                            />
+                          </ListItem>
+                        )}
+                      </Draggable>
+                    );
+                  }
+                })}
+                {provided.placeholder}
+              </List>
+            )}
+          </Droppable>
         </Flex>
       </Flex>
     </>

@@ -5,7 +5,8 @@ import { Flex } from "@chakra-ui/react";
 import Logo from "../Logo";
 import MenuTopBar from "../MenuTopBar";
 import NotificationAlert from "../NotificationAlert";
-import UserCard from "../UserCard";
+import UserAvatarTopBar from "../UserAvatarTopBar";
+import ArchiveIcon from "../ArchiveIcon";
 
 export default function TopBar() {
   return (
@@ -22,8 +23,9 @@ export default function TopBar() {
         <MenuTopBar />
       </Flex>
       <Flex alignItems={"center"}>
+        <ArchiveIcon />
         <NotificationAlert />
-        <UserCard />
+        <UserAvatarTopBar />
       </Flex>
     </Flex>
   );

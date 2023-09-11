@@ -36,6 +36,9 @@ export class Task {
   @Column({ type: "date", nullable: true })
   finishedDate: string;
 
+  @Column({ type: "boolean" })
+  isArchived: boolean;
+
   @ManyToOne(() => User, (user) => user.tasks)
   @JoinColumn({ name: "User_id" })
   user: User;
